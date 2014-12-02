@@ -83,8 +83,16 @@ def main():
         POSE_A
       ),
       transitions={
-        'nav_to_table_success': 'SUCCESS',
+        'nav_to_table_success': 'PREPARE_PICK',
         'nav_to_table_failure': 'FAILURE'
+      }
+    )
+    smach.StateMachine.add(
+      'PREPARE_PICK',
+      states.PreparePickObject(torso_client, tuck_arms_client),
+      transitions={
+        'prepare_pick_success': 'SUCCESS',
+        'prepare_pick_failure': 'FAILURE'
       }
     )
   outcome = sm.execute()

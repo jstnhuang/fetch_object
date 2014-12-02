@@ -123,38 +123,80 @@ class NavigateToTable(smach.State):
     if state != GoalStatus.SUCCEEDED:
       rospy.logerr('Failed to roughly navigate to table.')
       return 'nav_to_table_failure'
+    return 'nav_to_table_success'
 
     # Find the table and drive up to it.
-    try:
-      response = self._segment_tabletop()
-      rospy.loginfo('Table found: {}'.format(response.table))
-      if len(response.table.convex_hull.triangles) == 0:
-        rospy.logerr('Couldn\'t find table while navigating.')
-        return 'nav_to_table_failure'
-      goal = MoveBaseGoal(
-        target_pose=PoseStamped(
-          header=Header(frame_id=response.table.pose.header.frame_id),
-          pose=Pose(
-            position=Point(
-              response.table.x_min - 0.4,
-              (response.table.y_min + response.table.y_max) / 2,
-              0
-            ),
-            orientation=self._goal_pose.orientation
-          )
-        )
-      )
-      # TODO(jstn): doesn't really do anything.
-      rospy.loginfo('Driving to table, goal={}'.format(goal))
-      self._nav_client.wait_for_server()
-      self._nav_client.send_goal(goal)
-      self._nav_client.wait_for_result() # Navigation returns nothing.
-      rospy.loginfo('Drove to table.')
-      state = self._nav_client.get_state()
-      if state != GoalStatus.SUCCEEDED:
-        rospy.logerr('Failed to precisely navigate to table.')
-        return 'nav_to_table_failure'
+    #try:
+    #  response = self._segment_tabletop()
+    #  rospy.loginfo('Table found: {}'.format(response.table))
+    #  if len(response.table.convex_hull.triangles) == 0:
+    #    rospy.logerr('Couldn\'t find table while navigating.')
+    #    return 'nav_to_table_failure'
+    #  goal = MoveBaseGoal(
+    #    target_pose=PoseStamped(
+    #      header=Header(frame_id=response.table.pose.header.frame_id),
+    #      pose=Pose(
+    #        position=Point(
+    #          response.table.x_min - 0.4,
+    #          (response.table.y_min + response.table.y_max) / 2,
+    #          0
+    #        ),
+    #        orientation=self._goal_pose.orientation
+    #      )
+    #    )
+    #  )
+    #  # TODO(jstn): doesn't really do anything.
+    #  rospy.loginfo('Driving to table, goal={}'.format(goal))
+    #  self._nav_client.wait_for_server()
+    #  self._nav_client.send_goal(goal)
+    #  self._nav_client.wait_for_result() # Navigation returns nothing.
+    #  rospy.loginfo('Drove to table.')
+    #  state = self._nav_client.get_state()
+    #  if state != GoalStatus.SUCCEEDED:
+    #    rospy.logerr('Failed to precisely navigate to table.')
+    #    return 'nav_to_table_failure'
 
-      return 'nav_to_table_success'
-    except rospy.ServiceException:
-      return 'nav_to_table_failure'
+    #  return 'nav_to_table_success'
+    #except rospy.ServiceException:
+    #  return 'nav_to_table_failure'
+
+class PreparePickObject(smach.State):
+  """Prepares the robot to pick up an object on a table.
+
+  It raises the base and deploys the arms out in front of it.
+  """
+
+  def __init__(self, torso_client, tuck_arms_client):
+    """Constructor.
+
+    Args:
+      torso_client: An action client for the PR2 torso.
+    """
+    smach.State.__init__(
+      self,
+      outcomes=['prepare_pick_success', 'prepare_pick_failure']
+    )
+    self._torso_client = torso_client
+    self._tuck_arms_client = tuck_arms_client
+
+  def execute(self, userdata):
+    rospy.loginfo('Executing PreparePickObject')
+    self._torso_client.wait_for_server()
+    # TODO(jstn): raise to a height based on the table's height.
+    goal = SingleJointPositionGoal(
+      position=0.20,
+      min_duration=rospy.Duration.from_sec(1),
+      max_velocity=1
+    )
+    self._torso_client.send_goal(goal)
+    self._torso_client.wait_for_result() # Torso client returns nothing.
+
+    self._tuck_arms_client.wait_for_server()
+    goal = TuckArmsGoal(tuck_left=False, tuck_right=False)
+    self._tuck_arms_client.send_goal(goal)
+    self._tuck_arms_client.wait_for_result()
+    result = self._tuck_arms_client.get_result()
+    if result is None:
+      return 'prepare_pick_failure'
+    return 'prepare_pick_success'
+
