@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="map_server" type="map_server" name="map_server" args="$(find fetch_object)/resources/cse014.yaml" required="true" />
+  <include file="$(find pr2_2dnav)/pr2_2dnav.launch" />
+</launch>

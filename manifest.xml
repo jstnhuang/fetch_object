@@ -1,0 +1,22 @@
+<package>
+  <description brief="fetch_object">
+
+     fetch_object
+
+  </description>
+  <author>Justin Huang</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/fetch_object</url>
+  <depend package="geometry_msgs"/>
+  <depend package="move_base_msgs"/>
+  <depend package="pr2_common_action_msgs"/>
+  <depend package="pr2_controllers_msgs"/>
+  <depend package="smach"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="tabletop_collision_map_processing"/>
+  <depend package="tabletop_object_detector"/>
+</package>
+
+
