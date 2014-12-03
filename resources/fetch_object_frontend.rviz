@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Image1
+        - /Pickup visualizations1
       Splitter Ratio: 0.819512
     Tree Height: 625
   - Class: rviz/Tool Properties
@@ -586,7 +586,7 @@ Visualization Manager:
       Name: AMCL Cloud
       Topic: /particlecloud
       Value: true
-    - Alpha: 1
+    - Alpha: 0.5
       Class: rviz/GridCells
       Color: 255; 0; 0
       Enabled: true
@@ -720,6 +720,42 @@ Visualization Manager:
       Queue Size: 2
       Transport Hint: raw
       Value: true
+    - Class: rviz/Group
+      Displays:
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /grasp_executor_fast
+          Name: Grasp executor markers
+          Namespaces:
+            /move_base_node/local_costmap/voxel_grid_throttled: true
+          Queue Size: 100
+          Value: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /object_manipulator/grasp_execution_markers
+          Name: Grasp execution markers
+          Namespaces:
+            /move_base_node/local_costmap/voxel_grid_throttled: true
+          Queue Size: 100
+          Value: true
+        - Class: rviz/Marker
+          Enabled: true
+          Marker Topic: /tabletop_object_recognition_markers
+          Name: Object recognition markers
+          Namespaces:
+            /move_base_node/local_costmap/voxel_grid_throttled: true
+          Queue Size: 100
+          Value: true
+        - Class: rviz/MarkerArray
+          Enabled: true
+          Marker Topic: /grasp_executor_fast_array
+          Name: Grasp executor fast array
+          Namespaces:
+            {}
+          Queue Size: 100
+          Value: true
+      Enabled: true
+      Name: Pickup visualizations
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -738,7 +774,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.69835
+      Distance: 6.736
       Focal Point:
         X: 3.1997
         Y: 1.52965
@@ -762,5 +798,5 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Width: 1871
-  X: 41
-  Y: -3
+  X: 42
+  Y: 24

@@ -10,6 +10,7 @@
   <url>http://ros.org/wiki/fetch_object</url>
   <depend package="geometry_msgs"/>
   <depend package="move_base_msgs"/>
+  <depend package="object_manipulation_msgs"/>
   <depend package="pr2_common_action_msgs"/>
   <depend package="pr2_controllers_msgs"/>
   <depend package="smach"/>
